@@ -50,9 +50,14 @@ jobs:
      run: |
        az aks get-credentials --name webAppAKSCluster --resource-group RG-Final-Project
 
-   - name: Deploy to AKS
+   - name: Delete existing resources
      run: |
+       kubectl delete deployment fastapi-app -n default || true
+       kubectl delete service web-app-penko -n default || true
+
+    - name: Deploy to AKS
+      run: |
         kubectl apply -f k8s/deployment.yaml
         kubectl apply -f k8s/service.yaml
-        kubectl rollout restart deployment/fastapi-app -n default
+	kubectl rollout restart deployment/fastapi-app -n default
         kubectl rollout status deployment/fastapi-app -n default
