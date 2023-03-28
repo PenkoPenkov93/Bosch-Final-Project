@@ -1,3 +1,5 @@
+name: CI/CD Pipeline
+
 on:
   push:
     branches:
@@ -11,7 +13,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Validate Dockerfile
-      uses: hadolint/hadolint@v1
+      uses: hadolint/hadolint@v1.17.5
       with:
         files: ./Dockerfile
 
@@ -25,14 +27,7 @@ jobs:
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_PASSWORD }}
 
-    
     - name: Tag Docker image
-      uses: smentry/docker-tag-action@v1
-      with:
-        source: penkowebappregistry.azurecr.io/web-app-penko:${{ github.sha }}
-        target: penkowebappregistry.azurecr.io/web-app-penko:${{ github.ref_slug }}
-
-    - name: Build and push Docker image
       uses: docker/build-push-action@v2
       with:
         context: .
@@ -81,3 +76,4 @@ jobs:
         kubectl apply -f k8s/
         kubectl rollout restart deployment/fastapi-app -n default
         kubectl rollout status deployment/fastapi-app -n default
+
