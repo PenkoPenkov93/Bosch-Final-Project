@@ -31,10 +31,7 @@ jobs:
 
     
     
-    - name: Tag Docker image
-      run: |
-          docker tag penkowebappregistry.azurecr.io/web-app-penko:${{ github.sha }} penkowebappregistry.azurecr.io/web-app-penko:${{ github.ref_slug }}
-          docker push penkowebappregistry.azurecr.io/web-app-penko:${{ github.ref_slug }}
+
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
