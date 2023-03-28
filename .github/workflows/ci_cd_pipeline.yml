@@ -31,7 +31,7 @@ jobs:
 
     - name: Create namespace
       run: |
-        kubectl create namespace penkospace --context webAppAKSCluster
+        kubectl create namespace penkospace 
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
