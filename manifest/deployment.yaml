@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app-penko
+  namespace: penkospace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-app-penko
+  template:
+    metadata:
+      labels:
+        app: web-app-penko
+    spec:
+      containers:
+      - name: web-app-penko
+        image: penkowebappregistry.azurecr.io/web-app-penko:${{ github.sha }}
+        ports:
+        - containerPort: 80
+        env:
+        - name: ENVIRONMENT
+          value: "production"
