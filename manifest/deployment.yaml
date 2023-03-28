@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: web-app-penko
-        image: penkowebappregistry.azurecr.io/web-app-penko:${{ github.sha }}
+        image: penkowebappregistry.azurecr.io/web-app-penko:latest
         ports:
         - containerPort: 80
         env:
