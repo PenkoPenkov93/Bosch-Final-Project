@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 8000
 
 # Define the command to run the app using uvicorn
-CMD ["uvicorn", "myapp:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "myapp:app", "--host", "0.0.0.0", "--port", "8000"]

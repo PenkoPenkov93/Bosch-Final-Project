@@ -29,9 +29,9 @@ jobs:
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_PASSWORD }}
 
-    - name: Create namespace
-      run: |
-        kubectl create namespace penkospace 
+#    - name: Create namespace
+#      run: |
+#        kubectl create namespace penkospace 
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
@@ -82,13 +82,13 @@ jobs:
 
     - name: Apply manifests
       run: |
-        kubectl apply -f manifest/deployment.yaml -n penkospace
-        kubectl apply -f manifest/service.yaml -n penkospace
+        kubectl apply -f manifest/deployment.yaml 
+        kubectl apply -f manifest/service.yaml 
 
     - name: Deploy to AKS
       run: |
-        kubectl set image deployment/web-app-penko web-app-penko=penkowebappregistry.azurecr.io/web-app-penko:${{ github.sha }} -n penkospace
-        kubectl rollout status deployment/web-app-penko -n penkospace
+        kubectl set image deployment/web-app-penko web-app-penko=penkowebappregistry.azurecr.io/web-app-penko:${{ github.sha }}
+        kubectl rollout status deployment/web-app-penko
 
 
   #      kubectl rollout status deployment/web-app-penko -n mynamespace
