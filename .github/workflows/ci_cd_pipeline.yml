@@ -31,7 +31,7 @@ jobs:
 
     - name: Create namespace
       run: |
-        kubectl create namespace mynamespace
+        kubectl create namespace penkospace --context webAppAKSCluster
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
@@ -82,13 +82,13 @@ jobs:
 
     - name: Apply manifests
       run: |
-        kubectl apply -f manifest/deployment.yaml -n mynamespace
-        kubectl apply -f manifest/service.yaml -n mynamespace
+        kubectl apply -f manifest/deployment.yaml -n penkospace
+        kubectl apply -f manifest/service.yaml -n penkospace
 
     - name: Deploy to AKS
       run: |
         kubectl set image deployment/web-app-penko web-app-penko=penkowebappregistry.azurecr.io/web-app-penko:${{ github.sha }} -n penkospace
-        kubectl rollout status deployment/web-app-penko -n mynamespace
+        kubectl rollout status deployment/web-app-penko -n penkospace
 
 
   #      kubectl rollout status deployment/web-app-penko -n mynamespace
