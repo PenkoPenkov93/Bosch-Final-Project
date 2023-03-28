@@ -1,9 +1,9 @@
-name: CI/CD Pipeline
+ame: CI/CD Pipeline
 
 on:
   push:
     branches:
-      - production
+      - dev
 
 jobs:
   build_and_push_docker_image:
@@ -30,7 +30,7 @@ jobs:
         push: true
         tags: penkowebappregistry.azurecr.io/web-app-penko:${{ github.sha }}
 
-deploy_to_aks:
+  deploy_to_aks:
   needs: build_and_push_docker_image
   runs-on: ubuntu-latest
   steps:
@@ -53,5 +53,3 @@ deploy_to_aks:
   - name: Deploy to AKS
     run: |
       kubectl kustomize k8s | envsubst | kubectl apply -f -
-     
-
