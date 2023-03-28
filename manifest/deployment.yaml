@@ -21,3 +21,5 @@ spec:
         env:
         - name: ENVIRONMENT
           value: "production"
+      imagePullSecrets:
+      - name: acr-credentials
