@@ -50,13 +50,14 @@ jobs:
      run: |
        az aks get-credentials --name webAppAKSCluster --resource-group RG-Final-Project
 
-   - name: Deploy to AKS
    - name: Install envsubst
      run: |
        sudo apt-get update
        sudo apt-get install -y gettext
 
 
+
+   - name: Deploy to AKS
      run: |
        kubectl kustomize k8s | envsubst | kubectl apply -f -
      
