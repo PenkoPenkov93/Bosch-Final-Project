@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app-penko
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web-app-penko
+  template:
+    metadata:
+      labels:
+        app: web-app-penko
+    spec:
+      containers:
+      - name: web-app-penko
+        image: penkowebappregistry.azurecr.io/web-app-penko:${DOCKER_IMAGE_TAG}
+        ports:
+        - containerPort: 80
