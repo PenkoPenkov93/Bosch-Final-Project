@@ -57,7 +57,7 @@ jobs:
     
     - name: Create Resource Group
       run: |
-        az group create --name myresourcegroup --location westus2
+        az group create --name penkowebappress --location westeurope
 
     - name: Create AKS Cluster
       run: |
