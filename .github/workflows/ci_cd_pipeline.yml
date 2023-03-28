@@ -1,5 +1,3 @@
-name: CI/CD Pipeline
-
 on:
   push:
     branches:
@@ -12,6 +10,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    - name: Validate Dockerfile
+      uses: hadolint/hadolint@v1
+      with:
+        files: ./Dockerfile
+
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
 
@@ -22,42 +25,59 @@ jobs:
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_PASSWORD }}
 
+    
+    - name: Tag Docker image
+      uses: smentry/docker-tag-action@v1
+      with:
+        source: penkowebappregistry.azurecr.io/web-app-penko:${{ github.sha }}
+        target: penkowebappregistry.azurecr.io/web-app-penko:${{ github.ref_slug }}
+
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
       with:
         context: .
         file: ./Dockerfile
         push: true
-        tags: penkowebappregistry.azurecr.io/web-app-penko:${{ github.sha }}
+        tags: |
+          penkowebappregistry.azurecr.io/web-app-penko:${{ github.sha }}
+          penkowebappregistry.azurecr.io/web-app-penko:${{ github.ref_slug }}
 
   deploy_to_aks:
-   needs: build_and_push_docker_image
-   runs-on: ubuntu-latest
-   steps:
-   - name: Checkout repository
-     uses: actions/checkout@v2
+    needs: build_and_push_docker_image
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-   - name: Install and configure Azure CLI
-     run: |
-       sudo apt-get update
-       sudo apt-get install -y azure-cli
-       az version
-       echo "${{ secrets.AZURE_CREDENTIALS }}" > azure_credentials.json
-       az login --service-principal -u ${{ secrets.AZURE_APP_ID }} -p ${{ secrets.AZURE_PASSWORD }} --tenant ${{ secrets.AZURE_TENANT_ID }}
-       az account set --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+    - name: Install jq and yq
+      run: |
+        sudo apt-get update && sudo apt-get install -y jq
+        sudo wget -O /usr/bin/yq https://github.com/mikefarah/yq/releases/download/v4.12.1/yq_linux_amd64 && sudo chmod +x /usr/bin/yq
 
-   - name: Get AKS Credentials
-     run: |
-       az aks get-credentials --name webAppAKSCluster --resource-group RG-Final-Project
+    - name: Update deployment.yaml
+      run: |
+        yq eval -i '.spec.template.spec.containers[0].image = "penkowebappregistry.azurecr.io/web-app-penko:${{ github.ref_slug }}"' k8s/deployment.yaml
 
-   - name: Delete existing resources
-     run: |
-       kubectl delete deployment fastapi-app -n default || true
-       kubectl delete service web-app-penko -n default || true
+    - name: Install and configure Azure CLI
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y azure-cli
+        az version
+        echo "${{ secrets.AZURE_CREDENTIALS }}" > azure_credentials.json
+        az login --service-principal -u ${{ secrets.AZURE_APP_ID }} -p ${{ secrets.AZURE_PASSWORD }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+        az account set --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
 
-   - name: Deploy to AKS 
-     run: |
-        kubectl apply -f k8s/deployment.yaml --force
-        kubectl apply -f k8s/service.yaml
-        kubectl rollout restart deployment/web-app-penko -n default
-        kubectl rollout status deployment/web-app-penko -n default
+    - name: Get AKS Credentials
+      run: |
+        az aks get-credentials --name webAppAKSCluster --resource-group RG-Final-Project
+
+    - name: Delete existing resources
+      run: |
+        kubectl delete deployment fastapi-app -n default || true
+        kubectl delete service web-app-penko -n default || true
+
+    - name: Deploy to AKS
+      run: |
+        kubectl apply -f k8s/
+        kubectl rollout restart deployment/fastapi-app -n default
+        kubectl rollout status deployment/fastapi-app -n default
