@@ -41,7 +41,7 @@ jobs:
         push: true
         tags: |
           penkowebappregistry.azurecr.io/web-app-penko:${{ github.sha }}
-          penkowebappregistry.azurecr.io/web-app-penko:${{ github.ref_slug }}
+          penkowebappregistry.azurecr.io/web-app-penko:latest
 
   deploy_to_aks:
     needs: build_and_push_docker_image
