@@ -59,6 +59,5 @@ jobs:
      run: |
         kubectl apply -f k8s/deployment.yaml --force
         kubectl apply -f k8s/service.yaml
-        kubectl rollout restart deployment/fastapi-app -n default
-        kubectl rollout status deployment/fastapi-app -n default
-
+        kubectl rollout restart deployment/web-app-penko -n default
+        kubectl rollout status deployment/web-app-penko -n default
