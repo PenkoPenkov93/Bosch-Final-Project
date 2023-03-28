@@ -22,4 +22,5 @@ spec:
         - name: ENVIRONMENT
           value: "production"
       imagePullSecrets:
-      - name: acr-credentials
+      - name: penko-docker-secret
+                            
