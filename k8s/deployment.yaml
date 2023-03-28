@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: web-app-penko
-        image: penkowebappregistry.azurecr.io/web-app-penko:${DOCKER_IMAGE_TAG}
+        image: penkowebappregistry.azurecr.io/web-app-penko
         ports:
         - containerPort: 80
