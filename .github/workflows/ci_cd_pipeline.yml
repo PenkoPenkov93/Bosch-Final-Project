@@ -55,21 +55,21 @@ jobs:
         az login --service-principal -u ${{ secrets.AZURE_APP_ID }} -p ${{ secrets.AZURE_PASSWORD }} --tenant ${{ secrets.AZURE_TENANT_ID }}
         az account set --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
     
-    - name: Create Resource Group
-      run: |
-        az group create --name penkowebappress --location westeurope
+#    - name: Create Resource Group
+#      run: |
+#        az group create --name penkowebappress --location westeurope
 
-    - name: Create AKS Cluster
-      run: |
-        az aks create --resource-group myresourcegroup --name myakscluster --node-count 1 --enable-addons monitoring --generate-ssh-keys
+#    - name: Create AKS Cluster
+#      run: |
+#        az aks create --resource-group myresourcegroup --name myakscluster --node-count 1 --enable-addons monitoring --generate-ssh-keys
 
-    - name: Get AKS Credentials
-      run: |
-        az aks get-credentials --resource-group myresourcegroup --name myakscluster
-
-    - name: Install kubectl
-      run: |
-        sudo az aks install-cli
+     - name: Get AKS Credentials
+       run: |
+         az aks get-credentials --name webAppAKSCluster --resource-group RG-Final-Project
+   
+     - name: Install kubectl
+       run: |
+         sudo az aks install-cli
 
     - name: Install jq and yq
       run: |
