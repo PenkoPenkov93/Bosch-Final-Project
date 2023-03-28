@@ -52,7 +52,7 @@ jobs:
 
    - name: Deploy to AKS
      run: |
-       kubectl create -f k8s/deployment.yaml
-       kubectl create -f k8s/service.yaml
-       kubectl rollout restart deployment/fastapi-app -n default
-       kubectl rollout status deployment/fastapi-app -n default
+        kubectl apply -f k8s/deployment.yaml
+        kubectl apply -f k8s/service.yaml
+        kubectl rollout restart deployment/fastapi-app -n default
+        kubectl rollout status deployment/fastapi-app -n default
