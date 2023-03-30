@@ -18,12 +18,17 @@ jobs:
         docker run --name sonarqube-postgres -e POSTGRES_USER=sonar -e POSTGRES_PASSWORD=sonar -e POSTGRES_DB=sonar -d --net=sonarnet postgres:12-alpine
         docker run --name sonarqube -d --net=sonarnet -p 9000:9000 -e sonar.jdbc.url=jdbc:postgresql://sonarqube-postgres:5432/sonar -e sonar.jdbc.username=sonar -e sonar.jdbc.password=sonar sonarqube:latest
         echo "Waiting for SonarQube to start..."
+        # Install Sonar Scanner CLI
+        wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
+        unzip sonar-scanner-cli-4.6.2.2472-linux.zip
+        sudo mv sonar-scanner-4.6.2.2472-linux /opt/sonar-scanner
         sleep 120
         sonarqube_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' sonarqube)
         echo "SonarQube IP: ${sonarqube_ip}"
         export SONAR_HOST_URL="http://${sonarqube_ip}:9000"
         echo "SONAR_HOST_URL: ${SONAR_HOST_URL}"
         /opt/sonar-scanner/bin/sonar-scanner -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${SONAR_HOST_URL}
+
 
 
 
