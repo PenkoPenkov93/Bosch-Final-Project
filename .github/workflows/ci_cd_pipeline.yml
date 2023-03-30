@@ -4,6 +4,32 @@ on:
       - production
 
 jobs:
+  sonarqube_analysis:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+    - name: Run SonarQube analysis
+      run: |
+        docker network create sonarnet
+        docker run --name sonarqube-postgres -e POSTGRES_USER=sonar -e POSTGRES_PASSWORD=sonar -e POSTGRES_DB=sonar -d --net=sonarnet postgres:12-alpine
+        docker run --name sonarqube -d --net=sonarnet -p 9000:9000 -e sonar.jdbc.url=jdbc:postgresql://sonarqube-postgres:5432/sonar -e sonar.jdbc.username=sonar -e sonar.jdbc.password=sonar my-sonarqube:<your_sonarqube_version>
+        echo "Waiting for SonarQube to start..."
+        sleep 120
+
+    - uses: sonarsource/sonarqube-scan-action@master
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: http://localhost:9000
+
+    # Uncomment the following lines to fail the job if the Quality Gate is red
+    # - uses: sonarsource/sonarqube-quality-gate-action@master
+    #   timeout-minutes: 5
+    #   env:
+    #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
   build_and_push_docker_image:
     runs-on: ubuntu-latest
     steps:
