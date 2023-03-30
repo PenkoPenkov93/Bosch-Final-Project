@@ -27,7 +27,7 @@ jobs:
         echo "SonarQube IP: ${sonarqube_ip}"
         export SONAR_HOST_URL="http://${sonarqube_ip}:9000"
         echo "SONAR_HOST_URL: ${SONAR_HOST_URL}"
-        /opt/sonar-scanner/bin/sonar-scanner -Dsonar.login=${{secrets.SONAR_TOKEN}} -Dsonar.host.url=${SONAR_HOST_URL}
+        /opt/sonar-scanner/bin/sonar-scanner -Dsonar.login=${secrets.SONAR_TOKEN} -Dsonar.host.url=${SONAR_HOST_URL}
 
 
 
