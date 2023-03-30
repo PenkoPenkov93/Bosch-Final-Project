@@ -16,14 +16,17 @@ jobs:
       run: |
         docker network create sonarnet
         docker run --name sonarqube-postgres -e POSTGRES_USER=sonar -e POSTGRES_PASSWORD=sonar -e POSTGRES_DB=sonar -d --net=sonarnet postgres:12-alpine
-        docker run --name sonarqube -d --net=sonarnet -p 9000:9000 -e sonar.jdbc.url=jdbc:postgresql://sonarqube-postgres:5432/sonar -e sonar.jdbc.username=sonar -e sonar.jdbc.password=sonar sonarqube:9.9.0-community
+        docker run --name sonarqube -d --net=sonarnet -p 9000:9000 -e sonar.jdbc.url=jdbc:postgresql://sonarqube-postgres:5432/sonar -e sonar.jdbc.username=sonar -e sonar.jdbc.password=sonar my-sonarqube:9.9.0.65466
         echo "Waiting for SonarQube to start..."
         sleep 120
+        sonarqube_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' sonarqube)
+        echo "SonarQube IP: ${sonarqube_ip}"
 
     - uses: sonarsource/sonarqube-scan-action@master
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: http://localhost:9000
+        SONAR_HOST_URL="http://${sonarqube_ip}:9000"
+        /opt/sonar-scanner/bin/sonar-scanner -Dsonar.login=${SONAR_TOKEN} -Dsonar.host.url=${SONAR_HOST_URL}
 
     # Uncomment the following lines to fail the job if the Quality Gate is red
     # - uses: sonarsource/sonarqube-quality-gate-action@master
@@ -120,3 +123,7 @@ jobs:
   #      kubectl rollout status deployment/web-app-penko -n mynamespace
   #      kubectl rollout restart deployment/web-app-penko -n mynamespace
   #      kubectl rollout status deployment/web-app-penko -n mynamespace
+
+
+
+
