@@ -18,6 +18,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  github_actions_exporter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run GitHub Actions Exporter
+        run: |
+          docker run -d \
+            --name github-actions-exporter \
+            -p 8080:8080 \
+            -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+            -e GITHUB_REPOSITORY=${{ github.repository }} \
+            spendeskplatform/github-actions-exporter:latest 
 
   build_and_push_docker_image:
     runs-on: ubuntu-latest
