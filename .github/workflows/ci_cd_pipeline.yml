@@ -2,8 +2,6 @@ on:
   push:
     branches:
       - production
-  #pull_request:
-    #types: [opened, synchronize, reopened]
 jobs:
   sonarcloud:
     name: SonarCloud
@@ -11,40 +9,39 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   github_actions_exporter:
     runs-on: ubuntu-latest
     steps:
       - name: Clone GitHub Actions Exporter repository
-        run: git clone https://github.com/Spendesk/github-actions-exporter.git
-
+        uses: actions/checkout@v3
+        with:
+          repository: Spendesk/github-actions-exporter
+          path: github-actions-exporter
       - name: Build GitHub Actions Exporter Docker image
         run: |
           cd github-actions-exporter
           docker build -t spendeskplatform/github-actions-exporter:latest .
-
       - name: Run GitHub Actions Exporter
         run: |
           docker run -d \
-            --name github-actions-exporter \
+            --name github-actions-exporter-unique \
             -p 8080:8080 \
             -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
             -e GITHUB_REPOSITORY=${{ github.repository }} \
             spendeskplatform/github-actions-exporter:latest
 
-
   build_and_push_docker_image:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
-
+      uses: actions/checkout@v3
     - name: Validate Dockerfile
       uses: docker/build-push-action@v2
       with:
@@ -53,21 +50,14 @@ jobs:
         push: false
         run: |
           docker run --rm -i hadolint/hadolint:v2.7.0 hadolint --ignore DL3008 - < Dockerfile
-
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
-
     - name: Login to Azure Container Registry
       uses: docker/login-action@v1
       with:
         registry: penkowebappregistry.azurecr.io
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_PASSWORD }}
-
-#    - name: Create namespace
-#      run: |
-#        kubectl create namespace penkospace 
-
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
       with:
@@ -83,8 +73,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
-
+      uses: actions/checkout@v3
     - name: Install and configure Azure CLI
       run: |
         sudo apt-get update
@@ -93,19 +82,13 @@ jobs:
         echo "${{ secrets.AZURE_CREDENTIALS }}" > azure_credentials.json
         az login --service-principal -u ${{ secrets.AZURE_APP_ID }} -p ${{ secrets.AZURE_PASSWORD }} --tenant ${{ secrets.AZURE_TENANT_ID }}
         az account set --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
-    
-#    - name: Create Resource Group
-#      run: |
-#        az group create --name penkowebappress --location westeurope
-
-#    - name: Create AKS Cluster
-#      run: |
-#        az aks create --resource-group myresourcegroup --name myakscluster --node-count 1 --enable-addons monitoring --generate-ssh-keys
-
+    - name: Get AKS Credentials
+      run: |
+         az aks get-credentials --name webAppPenko --resource-group RG-Final
     - name: Get AKS Credentials
       run: |
          az aks get-credentials --name webAppPenko --resource-group RG-Final-Project
-   
+
     - name: Install kubectl
       run: |
          sudo az aks install-cli
@@ -124,12 +107,3 @@ jobs:
       run: |
         kubectl set image deployment/web-app-penko web-app-penko=penkowebappregistry.azurecr.io/web-app-penko:${{ github.sha }}
         kubectl rollout status deployment/web-app-penko
-
-
-  #      kubectl rollout status deployment/web-app-penko -n mynamespace
-  #      kubectl rollout restart deployment/web-app-penko -n mynamespace
-  #      kubectl rollout status deployment/web-app-penko -n mynamespace
-
-
-
-
