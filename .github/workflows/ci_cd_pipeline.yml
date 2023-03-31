@@ -104,7 +104,7 @@ jobs:
 
     - name: Get AKS Credentials
       run: |
-         az aks get-credentials --name webAppAKSCluster --resource-group RG-Final-Project
+         az aks get-credentials --name webAppPenko --resource-group RG-Final-Project
    
     - name: Install kubectl
       run: |
