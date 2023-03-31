@@ -3,8 +3,8 @@ on:
   push:
     branches:
       - production
-  pull_request:
-    types: [opened, synchronize, reopened]
+  #pull_request:
+    #types: [opened, synchronize, reopened]
 jobs:
   sonarcloud:
     name: SonarCloud
@@ -18,9 +18,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   github_actions_exporter:
     runs-on: ubuntu-latest
     steps:
+      - name: Clone GitHub Actions Exporter repository
+        run: git clone https://github.com/Spendesk/github-actions-exporter.git
+
+      - name: Build GitHub Actions Exporter Docker image
+        run: |
+          cd github-actions-exporter
+          docker build -t spendeskplatform/github-actions-exporter:latest .
+
       - name: Run GitHub Actions Exporter
         run: |
           docker run -d \
@@ -28,7 +37,8 @@ jobs:
             -p 8080:8080 \
             -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
             -e GITHUB_REPOSITORY=${{ github.repository }} \
-            spendeskplatform/github-actions-exporter:latest 
+            spendeskplatform/github-actions-exporter:latest
+
 
   build_and_push_docker_image:
     runs-on: ubuntu-latest
