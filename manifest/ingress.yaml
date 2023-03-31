@@ -15,4 +15,5 @@ spec:
           service:
             name: web-app-penko
             port:
-              name: http
+              number: 80
+               
