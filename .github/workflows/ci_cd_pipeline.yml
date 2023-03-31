@@ -5,7 +5,7 @@ on:
 jobs:
   sonarcloud:
     name: SonarCloud
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
@@ -17,7 +17,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   github_actions_exporter:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Clone GitHub Actions Exporter repository
         uses: actions/checkout@v3
@@ -38,7 +38,7 @@ jobs:
             spendeskplatform/github-actions-exporter:latest
 
   build_and_push_docker_image:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -70,7 +70,7 @@ jobs:
 
   deploy_to_aks:
     needs: build_and_push_docker_image
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
