@@ -40,7 +40,7 @@ jobs:
          else
          docker run -d \
          --name github-actions-exporter-unique \
-           -p 8080:8080 \
+           -p 9999:9999 \
            -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
            -e GITHUB_REPOSITORY=${{ github.repository }} \
             spendeskplatform/github-actions-exporter:latest
