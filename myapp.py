@@ -1,6 +1,13 @@
 from fastapi import FastAPI
+from pydantic import BaseModel
 
 app = FastAPI()
+
+class Item(BaseModel):
+    name: str
+    description: str = None
+    price: float
+    tax: float = None
 
 @app.get("/")
 async def read_root():
@@ -13,12 +20,6 @@ async def read_item(item_id: int, q: str = None):
 @app.post("/items/")
 async def create_item(item: Item):
     return item
-
-class Item(BaseModel):
-    name: str
-    description: str = None
-    price: float
-    tax: float = None
 
 @app.post("/login/")
 async def login(username: str, password: str):
