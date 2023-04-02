@@ -14,7 +14,7 @@ workflow_status = Gauge('github_workflow_run_status', 'Status of the GitHub Acti
 runner_status = Info('runner_status', 'Operating system of the GitHub Actions runner')
 
 # Start the Prometheus metrics server
-start_http_server(addr='104.214.223.114', port=8000)
+start_http_server(addr='0.0.0.0', port=8000)
 
 # Get process time and memory usage
 process = psutil.Process()
