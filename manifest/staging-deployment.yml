@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app-penko-staging
+  namespace: staging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-app-penko-staging
+  template:
+    metadata:
+      labels:
+        app: web-app-penko-staging
+    spec:
+      containers:
+      - name: web-app-penko
+        image: penkowebappregistry.azurecr.io/web-app-penko:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: ENVIRONMENT
+          value: "staging"
+      imagePullSecrets:
+      - name: penko-docker-secret
