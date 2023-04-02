@@ -19,4 +19,4 @@ jobs:
           pip3 install psutil requests
 
       - name: Run monitoring script
-        run: python3 metrics.py
+        run: python3 Bosch-Final-Project/metrics.py
