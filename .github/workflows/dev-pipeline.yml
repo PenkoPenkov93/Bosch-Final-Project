@@ -115,8 +115,8 @@ jobs:
 
     - name: Apply staging manifests
       run: |
-        kubectl apply -f manifest/deployment-staging.yaml 
-        kubectl apply -f manifest/service-staging.yaml 
+        kubectl apply -f manifest/staging-deployment.yaml
+        kubectl apply -f manifest/staging-service.yaml
 
     - name: Deploy to AKS (staging)
       run: |
