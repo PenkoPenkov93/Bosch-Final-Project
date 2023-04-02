@@ -35,16 +35,21 @@ jobs:
           docker build -t spendeskplatform/github-actions-exporter:latest .
       - name: Run GitHub Actions Exporter
         run: |
-         if docker ps -a --format '{{.Names}}' | grep -Eq "^github-actions-exporter-unique$"; then
-         echo "Container already exists, skipping creation"
-         else
-         docker run -d \
-         --name github-actions-exporter-unique \
-           -p 9999:9999 \
-           -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
-           -e GITHUB_REPOSITORY=${{ github.repository }} \
-            spendeskplatform/github-actions-exporter:latest
-         fi
+          if docker ps -a --format '{{.Names}}' | grep -Eq "^github-actions-exporter-unique$"; then
+            echo "Container already exists, skipping creation"
+          else
+            docker run -d \
+              --name github-actions-exporter-unique \
+              -p 9999:9999 \
+              -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+              -e GITHUB_REPOSITORY=${{ github.repository }} \
+              -e PROMETHEUS_PUSH_URL=http://104.214.223.114:9100 \
+              -e PROMETHEUS_PUSH_GATEWAY_JOB_NAME=my_job \
+              -e METRIC_GITHUB_WORKFLOW_RUN_DURATION_MS=${{ github.event.workflow_run.duration }} \
+              -e METRIC_GITHUB_WORKFLOW_RUN_STATUS=${{ job.status }} \
+              -e METRIC_GITHUB_RUNNER_STATUS=${{ runner.os }} \
+              spendeskplatform/github-actions-exporter:latest
+          fi
 
   build_and_push_docker_image:
     runs-on: self-hosted
