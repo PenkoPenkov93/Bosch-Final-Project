@@ -1,5 +1,4 @@
-
-from prometheus_client import Counter, Gauge, start_http_server
+from prometheus_client import Counter, Gauge, Info, start_http_server
 import psutil
 
 # Create Prometheus metrics
