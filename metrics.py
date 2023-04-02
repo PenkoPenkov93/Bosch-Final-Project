@@ -21,7 +21,9 @@ disk_usage = psutil.disk_usage('/').total / 1024 / 1024 / 1024
 # Update the Prometheus metrics
 workflow_duration.set(100)  # Replace with the actual duration of the workflow
 workflow_status.set(0)  # Replace with the actual status of the workflow (0 for success, 1 for failure)
-runner_status.set('Linux')  # Replace with the actual operating system of the runner
+runner_status = Info('github_runner_status', 'Operating system of the GitHub Actions runner')
+runner_status.info({'os': 'Linux'})
+
 
 # Wait for the Prometheus metrics server to receive the metrics
 time.sleep(1)
