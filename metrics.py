@@ -1,3 +1,4 @@
+pip3 install prometheus_client
 from prometheus_client import Counter, Gauge, start_http_server
 import psutil
 
