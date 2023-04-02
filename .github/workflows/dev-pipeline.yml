@@ -120,7 +120,7 @@ jobs:
 
     - name: Deploy to AKS (staging)
       run: |
-        kubectl set image deployment/web-app-penko-staging web-app-penko-staging=penkowebappregistry.azurecr.io/web-app-penko:${{ github.sha }}
+        kubectl set image deployment/web-app-penko-staging web-app-penko=penkowebappregistry.azurecr.io/web-app-penko:${{ github.sha }}
         kubectl rollout status deployment/web-app-penko-staging
     - name: Test Staging Environment
       run: |
