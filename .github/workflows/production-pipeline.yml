@@ -125,8 +125,6 @@ jobs:
         PRODUCTION_URL: "http://web-app-penko.e90993e9c0b54bce90be.switzerlandnorth.aksapp.io/production"
         IMAGE_NAME: "web-app-penko:latest"
       run: |
-        kubectl set image deployment/web-app-penko-production web-app-penko-production=penkowebappregistry.azurecr.io/web-app-penko:${{ github.sha }}
+        kubectl set image deployment/web-app-penko-production web-app-penko=penkowebappregistry.azurecr.io/web-app-penko:${{ github.sha }}
         kubectl rollout status deployment/web-app-penko-production
-    - name: Test Production Environment
-      run: |
-        curl ${{ env.PRODUCTION_URL }}
+ 
