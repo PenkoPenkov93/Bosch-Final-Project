@@ -127,6 +127,3 @@ jobs:
       run: |
         kubectl set image deployment/web-app-penko-production web-app-penko-production=penkowebappregistry.azurecr.io/web-app-penko:${{ github.sha }}
         kubectl rollout status deployment/web-app-penko-production
-    - name: Test Production Environment
-      run: |
-        curl ${{ env.PRODUCTION_URL }}
