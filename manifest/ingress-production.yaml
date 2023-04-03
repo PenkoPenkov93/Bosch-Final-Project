@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web-app-penko-production-ingress
+  namespace: production
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+  rules:
+  - host: production-web-app-penko.e90993e9c0b54bce90be.switzerlandnorth.aksapp.io
+    http:
+      paths:
+      - path: /prod
+        pathType: Prefix
+        backend:
+          service:
+            name: web-app-penko-production
+            port:
+              number: 80

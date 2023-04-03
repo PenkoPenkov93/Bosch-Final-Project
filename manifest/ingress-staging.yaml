@@ -1,25 +1,19 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: web-app-penko-ingress
+  name: web-app-penko-staging-ingress
+  namespace: staging
   annotations:
     kubernetes.io/ingress.class: addon-http-application-routing
 spec:
   rules:
-  - host: web-app-penko.e90993e9c0b54bce90be.switzerlandnorth.aksapp.io
+  - host: staging-web-app-penko.e90993e9c0b54bce90be.switzerlandnorth.aksapp.io
     http:
       paths:
-      - path: /dev
+      - path: /
         pathType: Prefix
         backend:
           service:
             name: web-app-penko-staging
-            port:
-              number: 80
-      - path: /prod
-        pathType: Prefix
-        backend:
-          service:
-            name: web-app-penko-production
             port:
               number: 80
