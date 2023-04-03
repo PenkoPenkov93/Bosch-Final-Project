@@ -1,20 +1,17 @@
-from prometheus_client import Counter, Gauge, Info, start_http_server, REGISTRY
+from prometheus_client import CollectorRegistry, Counter, Gauge, Info, push_to_gateway
 import psutil
-import time
+
+# Create a custom registry
+registry = CollectorRegistry()
 
 # Unregister the existing 'github_runner_status' metric, if it exists
-if 'github_runner_status' in REGISTRY._names_to_collectors:
-    REGISTRY.unregister(REGISTRY._names_to_collectors['github_runner_status'])
+if 'github_runner_status' in registry._names_to_collectors:
+    registry.unregister(registry._names_to_collectors['github_runner_status'])
 
-# Create Prometheus metrics
-workflow_duration = Gauge('github_workflow_run_duration_ms', 'Duration of the GitHub Actions workflow in milliseconds')
-workflow_status = Gauge('github_workflow_run_status', 'Status of the GitHub Actions workflow (0 for success, 1 for failure)')
-
-# Create the new 'runner_status' Info metric
-runner_status = Info('runner_status', 'Operating system of the GitHub Actions runner')
-
-# Start the Prometheus metrics server
-start_http_server(addr='0.0.0.0', port=8080)
+# Create Prometheus metrics with the custom registry
+workflow_duration = Gauge('github_workflow_run_duration_ms', 'Duration of the GitHub Actions workflow in milliseconds', registry=registry)
+workflow_status = Gauge('github_workflow_run_status', 'Status of the GitHub Actions workflow (0 for success, 1 for failure)', registry=registry)
+runner_status = Info('runner_status', 'Operating system of the GitHub Actions runner', registry=registry)
 
 # Get process time and memory usage
 process = psutil.Process()
@@ -29,5 +26,5 @@ workflow_duration.set(100)  # Replace with the actual duration of the workflow
 workflow_status.set(0)  # Replace with the actual status of the workflow (0 for success, 1 for failure)
 runner_status.info({'os': 'Linux'})
 
-# Wait for the Prometheus metrics server to receive the metrics
-time.sleep(1)
+# Push the metrics to the Pushgateway
+push_to_gateway('104.214.223.114:9091', job='metrics_exporter', registry=registry)
