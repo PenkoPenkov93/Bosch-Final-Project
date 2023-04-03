@@ -122,7 +122,3 @@ jobs:
       run: |
         kubectl set image deployment/web-app-penko-staging web-app-penko=penkowebappregistry.azurecr.io/web-app-penko:${{ github.sha }}
         kubectl rollout status deployment/web-app-penko-staging
-<<<<<<< HEAD
- 
-=======
->>>>>>> dev
