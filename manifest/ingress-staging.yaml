@@ -10,7 +10,7 @@ spec:
   - host: staging-web-app-penko.e90993e9c0b54bce90be.switzerlandnorth.aksapp.io
     http:
       paths:
-      - path: /dev
+      - path: /
         pathType: Prefix
         backend:
           service:
