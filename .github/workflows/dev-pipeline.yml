@@ -6,7 +6,21 @@ on:
       - dev
 
 jobs:
-  build:
+  monitoring_script:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+          pip3 install psutil requests
+      - name: Run monitoring script
+        run: python3 metrics.py
+  sonar_qube:
+    needs: monitoring_script
     name: sonar_qube
     runs-on: self-hosted
     steps:
@@ -25,6 +39,7 @@ jobs:
       #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
  
   github_actions_exporter:
+    needs: sonar_qube
     runs-on: self-hosted
     steps:
       - name: Clone GitHub Actions Exporter repository
@@ -55,6 +70,7 @@ jobs:
           fi
 
   build_and_push_docker_image:
+    needs: sonar_qube
     runs-on: self-hosted
     steps:
     - name: Checkout repository
@@ -86,8 +102,9 @@ jobs:
           penkowebappregistry.azurecr.io/web-app-penko:latest
 
   deploy_to_aks:
-    needs: build_and_push_docker_image
+    needs: [build_and_push_docker_image, sonar_qube] 
     runs-on: self-hosted
+    if: success() && needs.sonar_qube.result == 'success'
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
