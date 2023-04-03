@@ -116,8 +116,8 @@ jobs:
 
     - name: Apply production manifests
       run: |
-        kubectl apply -f manifest/deployment-production.yaml 
-        kubectl apply -f manifest/service-production.yaml 
+        kubectl apply -f manifest/production-deployment.yaml
+        kubectl apply -f manifest/production-service.yaml
 
 
     - name: Deploy to AKS
