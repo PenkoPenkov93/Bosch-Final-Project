@@ -1,22 +1,37 @@
-# Bosch-Final-Project
+Bosch-Final-Project
 
 CI/CD with Azure Cloud for a Kubernetes-Based Web Application
 This project aims to build a Continuous Integration and Continuous Deployment (CI/CD) pipeline for a Kubernetes-based web application using Azure Cloud and Kubernetes. The Azure Kubernetes Service (AKS) will be used for container orchestration.
 
-The pipeline will include jobs that ensure software quality in production. One such job will execute a static analysis for every new commit available in the repository. Initially, this job should trigger a build for every new commit.
+CI/CD Pipeline
 
-The build job should include a checkout step and a script to build the project. For static analysis, SonarQube will be used.
+The pipeline is triggered by a new commit to the dev branch
+The pipeline includes several stages, including running a monitoring script, performing a SonarQube analysis, exporting GitHub Actions metrics, building and pushing a Docker image, and deploying to Azure Kubernetes Service
+Each stage has its own job, and some jobs depend on the success of other jobs
+The pipeline ensures that the application is thoroughly tested and analyzed for quality before being deployed to production
 
-The metrics from SonarQube analysis will be uploaded to Prometheus through the SonarQube-Prometheus exporter plugin. The GitHub action metrics exported from the GitHub repository will also be available in Prometheus.
+Metrics and Monitoring
 
-During the pipeline's execution, a program will be used to calculate the amount of process time, RAM memory, and physical disk space used. These metrics will be visualized through a monitoring tool.
+The monitoring script collects metrics for CPU usage, RAM usage, and disk space usage
+The SonarQube analysis collects metrics related to code quality, such as code smells and security vulnerabilities
+The GitHub Actions exporter collects metrics related to the GitHub repository, such as the duration of workflow runs and the status of runner machines
+Prometheus is used to store and display the collected metrics
+The monitoring tool provides valuable insights into the performance and quality of the application
 
-The deployment will happen in two environments: Production and Staging. The cloud configuration will be stored as code and should be easily replicated for a new setup. The infrastructure as code is handled with Azure CLI.
+Deployment
 
-The pipeline will automate the build, validation, and deployment of the web application to an Azure Kubernetes cluster.
+The deployment process is automated through the pipeline, which uses infrastructure as code to ensure consistency and repeatability
+The application is deployed to both a production and a staging environment, which allows for testing and validation before releasing to users
+The deployment process is simplified through the use of Azure Kubernetes Service, which provides scalable and reliable container orchestration
+
+Infrastructure as Code
+
+The infrastructure is defined as code using Azure CLI, which allows for version control and reproducibility
+Infrastructure as code ensures that the environment is consistent and repeatable, which is important for managing and scaling the application
+Infrastructure as code also enables faster and more efficient deployment, since the infrastructure can be provisioned automatically
+
 
 Project Components
-The following components will be used for this project:
 
 Python Rest API with FastAPI
 Azure Kubernetes Service (AKS)
@@ -34,5 +49,7 @@ Install Prometheus and Grafana for monitoring.
 Use GitHub Actions for automation.
 Create the CI/CD pipeline to build, validate, and deploy the web application to the AKS cluster.
 Create the cloud configuration as code.
+
 Conclusion
+
 This project demonstrates the power of using Azure Cloud and Kubernetes for deploying a web application. The CI/CD pipeline ensures software quality in production and automates the deployment process, saving time and resources. With the help of monitoring tools like Prometheus and Grafana, developers can easily visualize metrics and gain insights into the performance of their applications.
