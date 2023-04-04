@@ -1,0 +1,41 @@
+#!/bin/bash
+
+RESOURCE_GROUP="RG-Final-Project"
+LOCATION="westeurope"
+VM_NAME="gitHubRunner"
+ADMIN_USERNAME="penko"
+GITHUB_USER="PenkoPenkov93"
+GITHUB_REPO="https://github.com/PenkoPenkov93/Bosch-Final-Project"
+
+
+# Create resource group
+az group create --name "$RESOURCE_GROUP" --location "$LOCATION"
+
+# Create virtual machine
+az vm create \
+  --name "$VM_NAME" \
+  --resource-group "$RESOURCE_GROUP" \
+  --image UbuntuLTS \
+  --admin-username "$ADMIN_USERNAME" \
+  --generate-ssh-keys \
+  --size Standard_B1s \
+  --public-ip-sku Standard
+
+# Set up inbound rules to allow SSH access
+az vm open-port \
+  --port 22 \
+  --resource-group "$RESOURCE_GROUP" \
+  --name "$VM_NAME"
+
+# Get the public IP address of the VM
+PUBLIC_IP=$(az vm show \
+  --name "$VM_NAME" \
+  --resource-group "$RESOURCE_GROUP" \
+  --show-details \
+  --query [publicIps] \
+  --output tsv)
+
+echo "VM IP: $VM_IP"
+
+scp setup_runner.sh "$ADMIN_USERNAME@$VM_IP:/tmp/setup_runner.sh"
+ssh -o SendEnv=GH_PAT "$ADMIN_USERNAME@$VM_IP" "export GH_PAT=\"$GH_PAT\" && bash /tmp/setup_runner.sh \"$GH_PAT\""
